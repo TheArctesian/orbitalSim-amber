@@ -1,5 +1,5 @@
 :root{
-    --blue: blue;
+    --blue: rgb(0, 102, 255);
 }
 
 ::selection {
