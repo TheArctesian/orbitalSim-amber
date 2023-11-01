@@ -1,4 +1,5 @@
 <script>
+  import "../../app.css";
   import { onMount } from "svelte";
   import * as d3 from "d3";
 
@@ -12,117 +13,125 @@
   import img_neptune from "$lib/Planets/neptune.png";
   import img_mercury from "$lib/Planets/mercury.png";
   import img_venus from "$lib/Planets/venus.png";
+  import img_spuk from "$lib/Planets/spuk.png";
 
   const GravConstant = 6.67 * 10 ** -11; // Big G
-  let PlanetMass = 2 * 10 ** 30 //Mass of sun
-  let SatMass, Radius,Velocity, KE, PE, TE;
+  const sun_mass = 2 * 10 ** 30; //Mass of sun
+  let custom_mass = 100;
+  let custom_radius = 100; //limit 10-100
+  let custom_period = 500;
+  let custom_orbit = 500;
+  let planet_name = "";
 
-  function calcVelocity() {
-    Velocity = Math.sqrt((2 * KE) / SatMass);
-    return Velocity;
-  }
+  let customPlanet = {
+    name: "Custom Planet",
+    radius: custom_radius,
+    orbit: custom_orbit / 3,
+    orbit_raw: custom_orbit,
+    color: "white",
+    period: custom_period,
+    mass: custom_mass,
+    img: img_spuk,
+  };
 
-  function calcKE() {
-    console.log("I AM BEING CALLED KE");
-    KE = (GravConstant * PlanetMass * SatMass) / (2 * Radius);
-    return KE;
-  }
-
-  function calcPE() {
-    PE = -(GravConstant * PlanetMass * SatMass) / Radius;
-    return PE;
-  }
-
-  function calcTE() {
-    TE = KE + PE;
-    return TE;
-  }
-  function callAll() {
-    calcKE();
-    calcPE();
-    calcTE();
-    calcVelocity();
-  }
-
-  // Calculate KE, PE, and TE before Velocity
-  $: KE = calcKE();
-  $: PE = calcPE();
-  $: TE = calcTE();
-
-  let selectedPlanet = "Earth"; // Default selected planet
-  let svgContainer;
-
-  const allPlanets = [
+  let allPlanets = [
     {
       name: "Mercury",
       radius: 4.879,
       orbit: 57.9 * 1.6,
+      orbit_raw: 57.9 * 1.6,
       color: "gray",
       period: 88,
+      mass: 0.33,
       img: img_mercury,
     },
     {
       name: "Venus",
       radius: 12.104,
       orbit: 108.2,
+      orbit_raw: 108.2,
       color: "yellow",
       period: 225,
+      mass: 4.87,
       img: img_venus,
     },
     {
       name: "Earth",
       radius: 12.742,
       orbit: 149.6,
+      orbit_raw: 149.6,
       color: "blue",
       period: 365,
+      mass: 5.97,
       img: img_earth,
     },
     {
       name: "Mars",
       radius: 6.779,
       orbit: 227.9,
+      orbit_raw: 227.9,
       color: "red",
       period: 687,
+      mass: 0.642,
       img: img_mars,
     },
     {
       name: "Jupiter",
       radius: 139.2,
       orbit: 778.5 / 3,
+      orbit_raw: 778.5,
       color: "orange",
       period: 4307,
+      mass: 1898,
       img: img_jupiter,
     },
     {
       name: "Saturn",
       radius: 116.5,
       orbit: 1433.5 / 3.5,
+      orbit_raw: 1433.5,
       color: "brown",
       period: 10754,
+      mass: 568,
       img: img_saturn,
     },
     {
       name: "Uranus",
       radius: 50.724,
-      orbit: 2872.5 / 6, //is meant to be 2872.5
+      orbit: 2872.5 / 6,
+      orbit_raw: 2872.5,
       color: "lightblue",
       period: 30660,
+      mass: 86.8,
       img: img_uranus,
     },
     {
       name: "Neptune",
       radius: 49.244,
       orbit: 4495.1 / 9,
+      orbit_raw: 4496,
       color: "darkblue",
       period: 60225,
+      mass: 102,
       img: img_neptune,
     },
   ];
-
+  $: customPlanet = {
+    name: "Custom Planet",
+    radius: custom_radius,
+    orbit: custom_orbit / 3,
+    orbit_raw: custom_orbit,
+    color: "white",
+    period: custom_period,
+    mass: custom_mass,
+    img: img_spuk,
+  };
+  allPlanets[allPlanets.length - 1] = customPlanet;
+  let selectedPlanet = "Earth"; // Default selected planet
+  let svgContainer;
   // Reactive statement returns an array containing only the selected planet
   let planets = allPlanets.filter((planet) => planet.name === selectedPlanet);
   $: planets = allPlanets.filter((planet) => planet.name === selectedPlanet);
-
   let width, height, orbit;
 
   function createVisualization() {
@@ -154,10 +163,10 @@
       const planetCircle = orbit
         .append("image")
         .attr("xlink:href", planet.img)
-        .attr("x", -planet.radius )
-        .attr("y", -planet.radius )
+        .attr("x", -planet.radius)
+        .attr("y", -planet.radius)
         .attr("height", planet.radius * 2)
-        .attr("width", planet.radius  * 2)
+        .attr("width", planet.radius * 2)
         .attr("transform", `translate(${planet.orbit}, 0)`);
 
       function animatePlanet() {
@@ -181,86 +190,166 @@
 
   onMount(() => {
     width = window.outerWidth;
-    height = window.outerHeight-0.2*window.outerHeight;
+    height = window.outerHeight;
     createVisualization();
   });
 
   // Clear the SVG and create a new visualization whenever selectedPlanet changes
   $: {
+    width = window.outerWidth;
+    height = window.outerHeight;
     d3.select("svg").remove();
+    planet_name = planets[0].name;
+
+    // Only reset the custom values if the selected planet is not the custom planet
+    if (selectedPlanet !== "Custom Planet") {
+      custom_mass   = planets[0].mass;
+      custom_orbit  = planets[0].orbit_raw;
+      custom_period = planets[0].period;
+      custom_radius = planets[0].radius;
+    }
+    console.log(planets[0])
     createVisualization();
-    console.log(planets);
   }
 </script>
 
-<div class="wrapper">
-  <div class="data">
-    <label>
-      Planet Mass:
-      <input
-        type="range"
-        min="0"
-        max="15"
-        step="1"
-        bind:value={PlanetMass}
-        on:click={callAll}
-      />
-    </label>
-    <p>{PlanetMass}</p>
+<div class="data">
+  <h1><u>{planet_name}</u></h1>
 
-    <label>
-      Satellite Mass:
-      <input
-        type="range"
-        min="0"
-        max="15"
-        step="1"
-        bind:value={SatMass}
-        on:click={callAll}
-      />
-    </label>
-    <p>{SatMass}</p>
-
-    <label>
-      Radius:
-      <input
-        type="range"
-        min="0"
-        max="15"
-        step="1"
-        bind:value={Radius}
-        on:click={callAll}
-      />
-    </label>
-    <p>{planets}</p>
-    <p>Velocity: {Velocity}</p>
-    <p>Kinetic Energy: {KE}</p>
-    <p>Potential Energy: {PE}</p>
-    <p>Total Energy: {TE}</p>
-    <select bind:value={selectedPlanet}>
-      <option value="Mercury">Mercury</option>
-      <option value="Venus">Venus</option>
-      <option value="Earth">Earth</option>
-      <option value="Mars">Mars</option>
-      <option value="Jupiter">Jupiter</option>
-      <option value="Saturn">Saturn</option>
-      <option value="Uranus">Uranus</option>
-      <option value="Neptune">Neptune</option>
-    </select>
+  <label>
+    Planet Mass: {planets[0].mass.toFixed(1)} x 10<sup>^24</sup> kg
+    <input
+      type="range"
+      min="0"
+      max="2000"
+      step="1"
+      bind:value={planets[0].mass}
+      on:input={() => (selectedPlanet = "Custom Planet")}
+    />
+  </label>
+  <label>
+    Planet Orbital Radius: {custom_orbit.toFixed(1)} x 10<sup>^9</sup> m
+    <input
+      type="range"
+      min="100"
+      max="1000"
+      step="1"
+      bind:value={planets[0].orbit}
+      on:input={() => (selectedPlanet = "Custom Planet")}
+    />
+  </label>
+  <label>
+    Radius of Planet: {(planets[0].radius * 5).toFixed(1)} x 10<sup>^5</sup> m
+    <input
+      type="range"
+      min="0"
+      max="1000"
+      step="1"
+      bind:value={planets[0].radius}
+      on:input={() => (selectedPlanet = "Custom Planet")}
+    />
+  </label>
+  <label>
+    Planet Period: {planets[0].period.toFixed(0)} days
+    <input
+      type="range"
+      min="0"
+      max="61000"
+      step="1"
+      bind:value={planets[0].period}
+      on:input={() => (selectedPlanet = "Custom Planet")}
+    />
+  </label>
+  <div class="values">
+    <p>
+      Total Energy = {(
+        (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
+        ((2 * planets[0].orbit * 10) ^ 9) /
+        Math.pow(10, 18)
+      ).toFixed(2)} (KE) + {(
+        -(
+          (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
+          ((planets[0].orbit * 10) ^ 9)
+        ) / Math.pow(10, 18)
+      ).toFixed(2)} (PE) x 10<sup>^12</sup> MJ = {(
+        (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
+          ((2 * planets[0].orbit * 10) ^ 9) /
+          Math.pow(10, 18) +
+        -(
+          (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
+          ((planets[0].orbit * 10) ^ 9)
+        ) /
+          Math.pow(10, 18)
+      ).toFixed(2)} x 10<sup>^12</sup> MJ
+    </p>
   </div>
-  <div class="simulation">
-    <div id="orbit" bind:this={svgContainer} />
-  </div>
+</div>
+<div class="select">
+  <select bind:value={selectedPlanet}>
+    <option value="Mercury">&gt; Mercury</option>
+    <option value="Venus">&gt; Venus</option>
+    <option value="Earth">&gt; Earth</option>
+    <option value="Mars">&gt; Mars</option>
+    <option value="Jupiter">&gt; Jupiter</option>
+    <option value="Saturn">&gt; Saturn </option>
+    <option value="Uranus">&gt; Uranus </option>
+    <option value="Neptune">&gt; Neptune</option>
+    <option value="Custom Planet">&gt; Custom </option>
+  </select>
+</div>
+<div class="simulation">
+  <div id="orbit" bind:this={svgContainer} />
 </div>
 
 <style>
   div {
     color: white;
   }
-  .simulation{
+  .simulation {
     margin: auto;
   }
   .data {
     position: absolute;
+    margin-top: 5%;
+    width: 40%;
+    right: 27.5%;
+    display: flex;
+    flex-direction: column;
+    border: white 2px solid;
+    border-radius: 0.1rem;
+    padding: 1rem;
+  }
+  .data h1 {
+    text-align: center;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: 0;
+    box-shadow: none;
+    border: 0 !important;
+    background: var(--blue);
+    flex: 1;
+    padding: 0 0.5em;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  select::-ms-expand {
+    display: none;
+  }
+  .select {
+    position: absolute;
+    bottom: 20%;
+    width: 100%;
+    text-align: center;
+    font-size: xx-large;
+  }
+  input[type="range"] {
+    background: var(--blue);
+    cursor: pointer;
   }
 </style>

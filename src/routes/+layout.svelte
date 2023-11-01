@@ -47,11 +47,11 @@
   .wrapper {
     display: flex;
     margin: auto;
-    width: max-content;
   }
   .Link {
     margin: 1rem;
     display: flex;
+    margin: auto;
   }
   a {
     display: flex;
@@ -61,10 +61,12 @@
     transition: all ease-in-out 200ms;
     text-decoration: none;
     color: white;
+    font-size: 90%;
   }
   img {
-    margin: 1rem;
     width: 5vw;
+    margin: auto;
+    margin: 1rem;
   }
   a:hover {
     transition: all ease-in-out 200ms;
