@@ -15,8 +15,11 @@
   import img_venus from "$lib/Planets/venus.png";
   import img_spuk from "$lib/Planets/spuk.png";
 
+  // Constants
   const GravConstant = 6.67 * 10 ** -11; // Big G
   const sun_mass = 2 * 10 ** 30; //Mass of sun
+
+  // Define a Custom Planet
   let custom_mass = 100;
   let custom_radius = 100; //limit 10-100
   let custom_period = 500;
@@ -116,6 +119,8 @@
       img: img_neptune,
     },
   ];
+
+  // Makes Custom Planet Reactive to user input
   $: customPlanet = {
     name: "Custom Planet",
     radius: custom_radius,
@@ -126,15 +131,24 @@
     mass: custom_mass,
     img: img_spuk,
   };
+
+  // Adds the custom planet to the array of all planets
   allPlanets[allPlanets.length - 1] = customPlanet;
+
   let selectedPlanet = "Earth"; // Default selected planet
-  let svgContainer;
-  // Reactive statement returns an array containing only the selected planet
+
+  // Search for Planets
   let planets = allPlanets.filter((planet) => planet.name === selectedPlanet);
+  // Reactive statement returns an array containing only the selected planet
   $: planets = allPlanets.filter((planet) => planet.name === selectedPlanet);
+
+  // D3 init vars
+  let svgContainer;
   let width, height, orbit;
 
+  // Function for creating animation
   function createVisualization() {
+    // Svg init
     const svg = d3
       .select(svgContainer)
       .append("svg")
@@ -153,13 +167,17 @@
       .attr("y", -100) // Adjust size as needed
       .attr("width", 200) // Adjust size as needed
       .attr("height", 200); // Adjust size as needed
+
+    // Add Planet for each in array (Will be none as planets are filtered for only the selected ones)
     planets.forEach((planet) => {
+      // Orbital Circle 
       orbit
         .append("circle")
         .attr("r", planet.orbit)
         .style("fill", "none")
         .style("stroke", "lightgray");
 
+      // Define Appearance and init position of planet
       const planetCircle = orbit
         .append("image")
         .attr("xlink:href", planet.img)
@@ -173,9 +191,9 @@
         planetCircle
           .transition()
           .duration(planet.period)
-          .ease(d3.easeLinear)
+          .ease(d3.easeLinear) // Defines traj of motion
           .attrTween("transform", function () {
-            return function (t) {
+            return function (t) { //Moves the planet
               const rotate = `rotate(${t * 360})`;
               const translate = `translate(${planet.orbit}, 0)`;
               return rotate + " " + translate;
@@ -203,16 +221,17 @@
 
     // Only reset the custom values if the selected planet is not the custom planet
     if (selectedPlanet !== "Custom Planet") {
-      custom_mass   = planets[0].mass;
-      custom_orbit  = planets[0].orbit_raw;
+      custom_mass = planets[0].mass;
+      custom_orbit = planets[0].orbit_raw;
       custom_period = planets[0].period;
       custom_radius = planets[0].radius;
     }
-    console.log(planets[0])
+    console.log(planets[0]);
     createVisualization();
   }
 </script>
 
+  <!-- This Section is the text box and all the logic within it  -->
 <div class="data">
   <h1><u>{planet_name}</u></h1>
 
@@ -260,6 +279,8 @@
       on:input={() => (selectedPlanet = "Custom Planet")}
     />
   </label>
+
+  <!-- This section shows the calculations for orbital energy  -->
   <div class="values">
     <p>
       Total Energy = {(
@@ -284,6 +305,8 @@
     </p>
   </div>
 </div>
+
+  <!-- Select Values  -->
 <div class="select">
   <select bind:value={selectedPlanet}>
     <option value="Mercury">&gt; Mercury</option>
@@ -297,6 +320,8 @@
     <option value="Custom Planet">&gt; Custom </option>
   </select>
 </div>
+
+<!-- Div is the target to inject the SVG -->
 <div class="simulation">
   <div id="orbit" bind:this={svgContainer} />
 </div>
