@@ -1,14 +1,14 @@
 <script>
   import { onMount } from "svelte";
-  import img_sun from "../../lib/Planets/sun.png";
-  import img_earth from "../../lib/Planets/earth.webp";
-  import img_jupiter from "../../lib/Planets/jupiter.png";
-  import img_mars from "../../lib/Planets/mars.png";
-  import img_saturn from "../../lib/Planets/saturn.png";
-  import img_uranus from "../../lib/Planets/uranus.webp";
-  import img_neptune from "../../lib/Planets/neptune.png";
-  import img_mercury from "../../lib/Planets/mercury.png";
-  import img_venus from "../../lib/Planets/mercury.png";
+  import img_sun from "../../lib/planets/sun.png";
+  import img_earth from "../../lib/planets/earth.webp";
+  import img_jupiter from "../../lib/planets/jupiter.png";
+  import img_mars from "../../lib/planets/mars.png";
+  import img_saturn from "../../lib/planets/saturn.png";
+  import img_uranus from "../../lib/planets/uranus.webp";
+  import img_neptune from "../../lib/planets/neptune.png";
+  import img_mercury from "../../lib/planets/mercury.png";
+  import img_venus from "../../lib/planets/mercury.png";
 
   // Planets
   class Planet {
