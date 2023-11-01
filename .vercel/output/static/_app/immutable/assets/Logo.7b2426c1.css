@@ -1,1 +1,0 @@
-:root{--blue: rgb(0, 102, 255)}::selection{background:var(--blue)}::-moz-selection{background:var(--blue)}:global(body){color:azure}

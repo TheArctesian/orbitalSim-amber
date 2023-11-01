@@ -37,8 +37,9 @@
 
 <style>
   :global(body) {
-    /* background-image: url("../lib/bg.png"); */
+    background-image: url("../lib/bg.png");
     background-size: cover;
+        font-family: "Fira Code", monospace;
   }
   div {
     color: white;
