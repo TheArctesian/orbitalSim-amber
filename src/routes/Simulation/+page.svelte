@@ -79,7 +79,6 @@
       />
     </label>
     <p>{Radius}</p>
-
     <p>Velocity: {Velocity}</p>
     <p>Kinetic Energy: {KE}</p>
     <p>Potential Energy: {PE}</p>

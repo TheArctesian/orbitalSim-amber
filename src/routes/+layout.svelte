@@ -37,7 +37,7 @@
 
 <style>
   :global(body) {
-    background-image: url("../lib/bg.png");
+    /* background-image: url("../lib/bg.png"); */
     background-size: cover;
   }
   div {
@@ -63,7 +63,7 @@
   }
   img {
     margin: 1rem;
-    width: 100px;
+    width: 5vw;
   }
   a:hover {
     transition: all ease-in-out 200ms;
