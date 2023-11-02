@@ -21,14 +21,14 @@
     For a refresher or introduction into the physics of orbital mechanics go to
     <a href="/Description">this page</a>
     <br />
-    For a little information on the person who made this website <a href="About">the about page</a>
+    For a little information on the person who made this website
+    <a href="About">the about page</a>
   </div>
 </div>
 
 <style>
   .wrapper {
     display: flex;
-    margin: 4rem;
   }
   div {
     color: white;
@@ -39,6 +39,11 @@
     font-size: medium;
     width: 50vw;
   }
+    @media (max-width: 750px) {
+      .text{
+        width: 90vw;
+      }
+    }
   h1 {
     text-align: center;
   }

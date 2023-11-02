@@ -22,17 +22,18 @@
   // Define a Custom Planet
   let custom_mass = 100;
   let custom_radius = 100; //limit 10-100
-  let custom_period = 500;
   let custom_orbit = 500;
-  let planet_name = "";
+  let custom_period = 100;
+  let planet_name = "Custom Planet";
 
+  console.log(custom_period);
   let customPlanet = {
     name: "Custom Planet",
     radius: custom_radius,
     orbit: custom_orbit / 3,
     orbit_raw: custom_orbit,
     color: "white",
-    period: custom_period,
+    period: custom_orbit,
     mass: custom_mass,
     img: img_spuk,
   };
@@ -118,20 +119,43 @@
       mass: 102,
       img: img_neptune,
     },
+    customPlanet,
   ];
-
   // Makes Custom Planet Reactive to user input
-  $: customPlanet = {
-    name: "Custom Planet",
-    radius: custom_radius,
-    orbit: custom_orbit / 3,
-    orbit_raw: custom_orbit,
-    color: "white",
-    period: custom_period,
-    mass: custom_mass,
-    img: img_spuk,
-  };
+  function calculatePeriod(orbit, mass) {
+    console.log("I HAVE BEEN CALLED WERE CALCLING PERIOD");
+    console.log(
+      2 *
+        Math.PI *
+        Math.sqrt(orbit ** 3 / (GravConstant * (mass * 10 ** 24))) *
+        24 *
+        60 *
+        60
+    );
+    return (
+      2 *
+      Math.PI *
+      Math.sqrt(orbit ** 3 / (GravConstant * (mass * 10 ** 24))) *
+      24 *
+      60 *
+      60 *
+      60
+    );
+  }
 
+  // Reactive statements for custom planet's properties
+  $: {
+    customPlanet = {
+      name: "Custom Planet",
+      radius: custom_radius,
+      orbit: custom_orbit / 3,
+      orbit_raw: custom_orbit,
+      color: "white",
+      period: calculatePeriod(custom_orbit * 10 ** 9, sun_mass), // Use the function to calculate period
+      mass: custom_mass,
+      img: img_spuk,
+    };
+  }
   // Adds the custom planet to the array of all planets
   allPlanets[allPlanets.length - 1] = customPlanet;
 
@@ -170,7 +194,7 @@
 
     // Add Planet for each in array (Will be none as planets are filtered for only the selected ones)
     planets.forEach((planet) => {
-      // Orbital Circle 
+      // Orbital Circle
       orbit
         .append("circle")
         .attr("r", planet.orbit)
@@ -193,7 +217,8 @@
           .duration(planet.period)
           .ease(d3.easeLinear) // Defines traj of motion
           .attrTween("transform", function () {
-            return function (t) { //Moves the planet
+            return function (t) {
+              //Moves the planet
               const rotate = `rotate(${t * 360})`;
               const translate = `translate(${planet.orbit}, 0)`;
               return rotate + " " + translate;
@@ -209,6 +234,7 @@
   onMount(() => {
     width = window.outerWidth;
     height = window.outerHeight;
+    console.log(custom_period);
     createVisualization();
   });
 
@@ -225,29 +251,39 @@
       custom_orbit = planets[0].orbit_raw;
       custom_period = planets[0].period;
       custom_radius = planets[0].radius;
+    } else {
     }
     console.log(planets[0]);
     createVisualization();
   }
 </script>
 
-  <!-- This Section is the text box and all the logic within it  -->
+<!-- This Section is the text box and all the logic within it  -->
 <div class="data">
   <h1><u>{planet_name}</u></h1>
 
   <label>
-    Planet Mass: {planets[0].mass.toFixed(1)} x 10<sup>^24</sup> kg
+    <b
+      >Planet Mass (m):
+    </b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    {planets[0].mass.toFixed(1)} x 10<sup>24</sup> kg
     <input
       type="range"
-      min="0"
+      min= 1
       max="2000"
       step="1"
       bind:value={planets[0].mass}
       on:input={() => (selectedPlanet = "Custom Planet")}
+      on:change={() =>
+        (planets[0].period = calculatePeriod(
+          planets[0].orbit,
+          planets[0].mass
+        ))}
     />
   </label>
   <label>
-    Planet Orbital Radius: {custom_orbit.toFixed(1)} x 10<sup>^9</sup> m
+    <b>Planet Orbital Radius (r): </b>{planets[0].orbit.toFixed(2)} x 10<sup>9</sup>
+    m
     <input
       type="range"
       min="100"
@@ -255,21 +291,35 @@
       step="1"
       bind:value={planets[0].orbit}
       on:input={() => (selectedPlanet = "Custom Planet")}
+      on:change={() =>
+        (planets[0].period = calculatePeriod(
+          planets[0].orbit,
+          planets[0].mass
+        ))}
     />
   </label>
   <label>
-    Radius of Planet: {(planets[0].radius * 5).toFixed(1)} x 10<sup>^5</sup> m
+    <b>Radius of Planet (r<sub>p</sub>):</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    {(planets[0].radius * 5).toFixed(
+      1
+    )} x 10<sup>5</sup>
+    m
     <input
       type="range"
-      min="0"
-      max="1000"
+      min=10
+      max="300"
       step="1"
       bind:value={planets[0].radius}
       on:input={() => (selectedPlanet = "Custom Planet")}
+      on:change={() =>
+        (planets[0].period = calculatePeriod(
+          planets[0].orbit,
+          planets[0].mass
+        ))}
     />
   </label>
-  <label>
-    Planet Period: {planets[0].period.toFixed(0)} days
+
+  <!-- <label>
     <input
       type="range"
       min="0"
@@ -278,21 +328,24 @@
       bind:value={planets[0].period}
       on:input={() => (selectedPlanet = "Custom Planet")}
     />
-  </label>
+  </label> -->
 
   <!-- This section shows the calculations for orbital energy  -->
   <div class="values">
     <p>
-      Total Energy = {(
+      <b>Period (T): </b>{planets[0].period.toFixed(0)} days
+    </p>
+    <p>
+      <b>Total Energy </b>= {(
         (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
         ((2 * planets[0].orbit * 10) ^ 9) /
         Math.pow(10, 18)
-      ).toFixed(2)} (KE) + {(
+      ).toFixed(2)} <b>(KE)</b> + {(
         -(
           (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
           ((planets[0].orbit * 10) ^ 9)
         ) / Math.pow(10, 18)
-      ).toFixed(2)} (PE) x 10<sup>^12</sup> MJ = {(
+      ).toFixed(2)} <b>(PE) </b> = {(
         (GravConstant * ((planets[0].mass * 10) ^ 24) * sun_mass) /
           ((2 * planets[0].orbit * 10) ^ 9) /
           Math.pow(10, 18) +
@@ -301,12 +354,12 @@
           ((planets[0].orbit * 10) ^ 9)
         ) /
           Math.pow(10, 18)
-      ).toFixed(2)} x 10<sup>^12</sup> MJ
+      ).toFixed(2)} x 10<sup>12</sup> MJ
     </p>
   </div>
 </div>
 
-  <!-- Select Values  -->
+<!-- Select Values  -->
 <div class="select">
   <select bind:value={selectedPlanet}>
     <option value="Mercury">&gt; Mercury</option>
@@ -334,10 +387,11 @@
     margin: auto;
   }
   .data {
+    text-align: center;
     position: absolute;
-    margin-top: 5%;
-    width: 40%;
-    right: 27.5%;
+    margin-top: 2%;
+    width: 60%;
+    right: 17.5%;
     display: flex;
     flex-direction: column;
     border: white 2px solid;

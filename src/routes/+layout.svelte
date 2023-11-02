@@ -64,7 +64,7 @@
     font-size: 90%;
   }
   img {
-    width: 5vw;
+    width: 10vw;
     margin: auto;
     margin: 1rem;
   }

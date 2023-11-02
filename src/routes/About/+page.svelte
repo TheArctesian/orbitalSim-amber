@@ -23,7 +23,7 @@
     margin: auto;
   }
   .text{
-    margin: 10rem;
+    margin: 10%;
     margin-bottom: 1rem;
   }
   img{
