@@ -108,11 +108,28 @@
   Now we can plug in numbers to this equation, feel free to test it out on the
   <a href="/Simulation">simulation page</a>
 
-  <h2>Gravitational Potential Energy (TODO)</h2>
+  <h2>Gravitational Potential Energy</h2>
   Energy in orbit is still comprised of the same things Kinetic Energy (KE) and Potential
-  Energy (PE). Kinetic energy is still
+  Energy (PE). More specificly the total energy is the sum of KE and PE. Kinetic
+  energy is still
   <br />
   <br />
+
+  Around a point-like object, the gravitational potential is singular as the
+  distance decreases to zero, thus you can't use it as a ground potential. The
+  only meaningful alternative to use the infinite distance as zero potential.
+  But, to preserve energy, objects coming from near-infinite, they get kinetical
+  energy, this is coming by the decrease in the gravitation well. Thus the
+  gravitational energy should be negative. If you revert the convention, i.e. to
+  have a positive gravitational potential, then you should revert also the
+  kinetical energy. It is weird or you have to find a different zero reference
+  point (it also weird + occasional, you have to explain, why) or you will harm
+  energy preservation (-> give up useful physics) Note, if you calculate some
+  easy thing, for example you are calculating the gravitational energy of an
+  elevator in a high school homework task, you can use the ground as zero
+  reference without any problem. It falls to (2): you essentially selected
+  6636km distance as zero potential in the gravity well of the Earth.
+
   <center>KE = <sup>1/</sup><sub>2</sub>mv<sup>2</sup></center>
   Which we can throw in our previously calculated formula of velocity to calculate
   as:
